@@ -22,8 +22,8 @@ def mention_func(message, _):
     text = message.body['text']
     parse_msg = text.split(' ')
 
-    if len(parse_msg) >= 3:
-        _, to, *send_msg = parse_msg
+    if len(parse_msg) >= 2:
+        _, *send_msg = parse_msg
 
         # lineに送る
         line_bot_api.push_message(
