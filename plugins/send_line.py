@@ -45,13 +45,16 @@ def send_sticker_mention_func(message, _):
     parse_msg = text.split(' ')
 
     # 形式に合っていれば
-    if len(parse_msg) == 3:
-        _, package_id, sticker_id = parse_msg
+    if len(parse_msg) == 4:
+        _, to, package_id, sticker_id = parse_msg
 
         # lineに送る
-        StickerSendMessage(
-            package_id=package_id,
-            sticker_id=sticker_id
+        line_bot_api.push_message(
+            to=to,
+            messages=StickerSendMessage(
+                package_id=package_id,
+                sticker_id=sticker_id
+            )
         )
 
         # メッセージにスタンプをつける
@@ -60,7 +63,7 @@ def send_sticker_mention_func(message, _):
     # 形式に合っていなければ
     else:
         message.reply(
-            "sticker [package_id] [sticker_id]\n"
+            "sticker [to] [package_id] [sticker_id]\n"
             + "https://developers.line.biz/media/messaging-api/sticker_list.pdf"
         )
 
