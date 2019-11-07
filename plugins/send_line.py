@@ -1,7 +1,7 @@
 import os
 
 from linebot import LineBotApi
-from linebot.models import TextSendMessage
+from linebot.models import TextSendMessage, StickerSendMessage
 from slackbot.bot import listen_to
 from slackbot.bot import respond_to
 
@@ -29,6 +29,40 @@ def mention_func(message, _):
 
         # メッセージにスタンプをつける
         message.react('+1')
+
+
+@respond_to('sticker (.*)')
+def send_sticker_mention_func(message, _):
+    """
+    LINE スタンプを送信します．
+    """
+
+    # slackに投稿されたメッセージのパース
+    text = message.body['text']
+    parse_msg = text.split(' ')
+
+    # 形式に合っていれば
+    if len(parse_msg) == 4:
+        _, to, package_id, sticker_id = parse_msg
+
+        # lineに送る
+        line_bot_api.push_message(
+            to=to,
+            messages=StickerSendMessage(
+                package_id=package_id,
+                sticker_id=sticker_id
+            )
+        )
+
+        # メッセージにスタンプをつける
+        message.react('+1')
+
+    # 形式に合っていなければ
+    else:
+        message.reply(
+            "sticker [to] [package_id] [sticker_id]\n"
+            + "https://developers.line.biz/media/messaging-api/sticker_list.pdf"
+        )
 
 
 # reply で始まるメッセージに対して
